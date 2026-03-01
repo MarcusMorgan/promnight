@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Prom Night — Lake Ridge High</title>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lato:ital,wght@0,300;0,400;1,300;1,400&family=Dancing+Script:wght@600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0f0a1a;
+    --surface: #1a1228;
+    --card: #221933;
+    --border: #3a2d52;
+    --pink: #f472b6;
+    --pink-dim: #9d4a74;
+    --purple: #a78bfa;
+    --purple-dim: #5b4a7a;
+    --gold: #fbbf24;
+    --text: #f0e6ff;
+    --text-dim: #9d8fbb;
+    --green: #34d399;
+    --red: #f87171;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 17px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Starfield background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 92% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 85%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 33% 55%, rgba(244,114,182,0.3) 0%, transparent 100%),
+      radial-gradient(2px 2px at 67% 35%, rgba(167,139,250,0.3) 0%, transparent 100%),
+      radial-gradient(ellipse at 50% 0%, rgba(167,139,250,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 0% 100%, rgba(244,114,182,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    padding: 32px 22px 40px;
+    animation: fadeUp 0.5s ease;
+  }
+  .screen.active { display: flex; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TITLE SCREEN ── */
+  #title {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .balloons { font-size: 48px; margin-bottom: 4px; animation: float 3s ease-in-out infinite; }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+
+  .school-tag {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Abril Fatface', serif;
+    font-size: 52px;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+  }
+
+  .title-year {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 22px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  .divider {
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--purple-dim), transparent);
+    margin: 0 auto 24px;
+  }
+
+  .tagline {
+    font-size: 16px;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 300px;
+    margin-bottom: 40px;
+  }
+
+  /* ── SCORE BAR — hidden from player ── */
+  .score-bar { display: none; }
+
+  /* ── SCENE CARD ── */
+  .scene-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 20px;
+    margin-bottom: 20px;
+    flex: 1;
+  }
+
+  .scene-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--purple-dim);
+    margin-bottom: 10px;
+  }
+
+  .scene-emoji { font-size: 36px; margin-bottom: 12px; display: block; }
+
+  .scene-title {
+    font-family: 'Abril Fatface', serif;
+    font-size: 22px;
+    color: var(--pink);
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  .scene-text {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text-dim);
+  }
+
+  .scene-text strong { color: var(--text); font-weight: 400; }
+  .scene-text em { color: var(--pink); font-style: italic; }
+
+  /* ── CHOICES ── */
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+
+  .choice-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 16px 18px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .choice-btn:hover, .choice-btn:active {
+    background: var(--card);
+    border-color: var(--pink-dim);
+    color: var(--text);
+    transform: translateX(4px);
+  }
+
+  .choice-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .choice-text { flex: 1; }
+  .choice-hint { display: block; font-size: 12px; color: var(--text-dim); margin-top: 3px; font-style: italic; }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    width: 100%;
+  }
+
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-dim);
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    padding: 12px 24px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--purple-dim); color: var(--text); }
+
+  /* ── ENDING SCREEN ── */
+  #ending {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .ending-emoji { font-size: 72px; margin-bottom: 16px; animation: endPop 0.6s ease; }
+  @keyframes endPop {
+    0%   { transform: scale(0); }
+    70%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .ending-tag {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .ending-title {
+    font-family: 'Abril Fatface', serif;
+    font-size: 34px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .ending-divider {
+    width: 60px; height: 1px;
+    margin: 0 auto 20px;
+  }
+
+  .ending-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    max-width: 340px;
+    margin-bottom: 16px;
+  }
+
+  .ending-text strong { color: var(--text); font-weight: 400; }
+
+  .ending-flavor {
+    font-family: 'Dancing Script', cursive;
+    font-size: 20px;
+    margin-bottom: 36px;
+  }
+
+  /* Ending color themes */
+  .end-1 .ending-tag  { color: #94a3b8; }
+  .end-1 .ending-title { color: #94a3b8; }
+  .end-1 .ending-divider { background: linear-gradient(90deg, transparent, #94a3b8, transparent); }
+  .end-1 .ending-flavor { color: #94a3b8; }
+
+  .end-2 .ending-tag  { color: var(--green); }
+  .end-2 .ending-title { color: var(--green); }
+  .end-2 .ending-divider { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+  .end-2 .ending-flavor { color: var(--green); }
+
+  .end-3 .ending-tag  { color: var(--gold); }
+  .end-3 .ending-title { color: var(--gold); }
+  .end-3 .ending-divider { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .end-3 .ending-flavor { color: var(--gold); }
+
+  .end-4 .ending-tag  { color: var(--pink); }
+  .end-4 .ending-title { color: var(--pink); }
+  .end-4 .ending-divider { background: linear-gradient(90deg, transparent, var(--pink), transparent); }
+  .end-4 .ending-flavor { color: var(--pink); }
+
+  /* Progress dots */
+  .progress {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .prog-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+
+  .prog-dot.done { background: var(--purple); }
+  .prog-dot.active { background: var(--pink); transform: scale(1.3); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- TITLE SCREEN -->
+  <div id="title" class="screen active">
+    <div class="balloons">🎈🌟🎈</div>
+    <div class="school-tag">Lake Ridge High School</div>
+    <h1>Prom<br/>Night</h1>
+    <div class="title-year">Senior Year</div>
+    <div class="divider"></div>
+    <p class="tagline">Warning: may cause secondhand embarrassment and/or feelings.</p>
+    <button class="btn-primary" onclick="startGame()">Start Your Night ✨</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game" class="screen">
+    <div class="progress" id="progress"></div>
+    <div class="score-bar">
+      <div class="score-pill"><span>💪</span> Confidence <div class="score-val" id="conf-val">0</div></div>
+      <div class="score-pill"><span>👯</span> Friend Vibe <div class="score-val" id="friend-val">0</div></div>
+    </div>
+    <div class="scene-card" id="scene-card">
+      <div class="scene-label" id="scene-label"></div>
+      <span class="scene-emoji" id="scene-emoji"></span>
+      <div class="scene-title" id="scene-title"></div>
+      <div class="scene-text" id="scene-text"></div>
+    </div>
+    <div class="choices" id="choices"></div>
+  </div>
+
+  <!-- ENDING SCREEN -->
+  <div id="ending" class="screen">
+    <div class="ending-emoji" id="end-emoji"></div>
+    <div class="ending-tag" id="end-tag"></div>
+    <div class="ending-title" id="end-title"></div>
+    <div class="ending-divider" id="end-divider"></div>
+    <p class="ending-text" id="end-text"></p>
+    <div class="ending-flavor" id="end-flavor"></div>
+    <button class="btn-primary" onclick="resetGame()">Play Again 🔄</button>
+    <button class="btn-secondary" onclick="showTitle()">Back to Title</button>
+  </div>
+
+</div>
+
+<script>
+// ── GAME STATE ──────────────────────────────────────────────────────────────
+let confidence = 0;
+let friendScore = 0;
+let askedMariah = false;
+let currentScene = 0;
+
+// ── SCENES DATA ─────────────────────────────────────────────────────────────
+const scenes = [
+
+  // SCENE 0 — Getting ready
+  {
+    label: 'Act I  ·  Morning of Prom',
+    emoji: '🪞',
+    title: 'The Mirror Moment',
+    text: `It's the morning of prom. You're standing in front of your mirror at 7am like a maniac, rehearsing what you're gonna say to <em>Mariah</em>.<br/><br/>Today is the day. You're finally going to ask her. Probably. Maybe. Okay you need to get dressed first.`,
+    choices: [
+      { icon: '👔', text: 'Spend an hour picking the perfect fit', hint: 'Looking good builds confidence.', conf: 1, friend: 0 },
+      { icon: '🧢', text: 'Throw on whatever — it\'s giving effortless', hint: 'Casual and unbothered.', conf: 0, friend: 0 },
+      { icon: '📱', text: 'Text the boys for outfit advice', hint: 'Your friends always come through.', conf: 0, friend: 1 },
+    ]
+  },
+
+  // SCENE 1 — Friends at school
+  {
+    label: 'Act I  ·  Hallway',
+    emoji: '🏫',
+    title: 'The Squad Catches On',
+    text: `You roll into Lake Ridge High and your boys immediately clock that something's off. You've been weird all week and they know it.<br/><br/><strong>"Bro you look nervous,"</strong> says your friend. <strong>"Is this about Mariah?"</strong><br/><br/>Uh oh.`,
+    choices: [
+      { icon: '🗣️', text: 'Come clean — tell them everything and ask for backup', hint: 'Vulnerability is underrated.', conf: 0, friend: 1 },
+      { icon: '😎', text: 'Play it cool. "Nervous? Me? Nah."', hint: 'Nobody is buying this.', conf: 0, friend: 0 },
+      { icon: '🎭', text: 'Dramatically monologue about your feelings for her', hint: '"She\'s like the sun, man. THE SUN."', conf: 1, friend: 0 },
+    ]
+  },
+
+  // SCENE 2 — Spot Mariah
+  {
+    label: 'Act I  ·  The Moment',
+    emoji: '💫',
+    title: 'There She Is',
+    text: `Then you see her.<br/><br/><em>Mariah.</em> Standing by her locker, laughing at something on her phone. She looks incredible and you suddenly forget how words work.<br/><br/>This is it. This is the moment. How do you approach?`,
+    choices: [
+      { icon: '🚶', text: 'Walk up confidently — head up, shoulders back', hint: 'Fake it till you make it.', conf: 1, friend: 0 },
+      { icon: '👬', text: 'Ask your friend to walk with you for moral support', hint: 'Strength in numbers.', conf: 0, friend: 1 },
+      { icon: '🫣', text: 'Hide behind the lockers and peer around the corner', hint: '"Just... scouting the situation."', conf: 0, friend: 0 },
+    ]
+  },
+
+  // SCENE 3 — THE MOMENT (ask or don't)
+  {
+    label: 'Act I  ·  The Big Question',
+    emoji: '💬',
+    title: 'Now or Never',
+    text: `You walk up. She looks up from her phone and smiles.<br/><br/><strong>"Hey! You good?"</strong><br/><br/>Your heart is going approximately one million beats per minute. You open your mouth. Everything you practiced at 7am is completely gone. Here we go.`,
+    choices: [
+      { icon: '💍', text: '"Hey Mariah... would you wanna go to prom with me?"', hint: 'The bravest six words in the English language.', ask: true },
+      { icon: '😅', text: '"Hey! Cool... cool weather today huh. Anyway bye."', hint: 'A tactical retreat. Iconic.', ask: false },
+    ]
+  },
+
+  // SCENE 4 — Arriving at prom
+  {
+    label: 'Act II  ·  Prom Night',
+    emoji: '🪩',
+    title: 'Lake Ridge After Dark',
+    text: `The gym of Lake Ridge High has been transformed. Fairy lights everywhere, a DJ absolutely cooking, and everyone dressed like it's the Met Gala but make it suburban Texas.<br/><br/>You step through the doors. How do you make your entrance?`,
+    choices: [
+      { icon: '🫂', text: 'Roll in deep with your whole crew', hint: 'Group entrance goes crazy.', conf: 0, friend: 1 },
+      { icon: '💨', text: 'Dip straight through the crowd to find Mariah', hint: 'Tunnel vision mode: activated.', conf: 0, friend: -1 },
+      { icon: '✨', text: 'Walk in alone, slow, like you own the place', hint: '"Was that a movie entrance??" — everyone', conf: 1, friend: 0 },
+    ]
+  },
+
+  // SCENE 5 — Mid prom
+  {
+    label: 'Act II  ·  The Party',
+    emoji: '🎶',
+    title: 'The Night Heats Up',
+    text: `The DJ drops a banger and the dance floor fills up. Your friends are having the time of their lives. Mariah is somewhere in the crowd.<br/><br/>What's your move?`,
+    choices: [
+      { icon: '🤝', text: 'Grab Mariah and bring her over to your friend group', hint: 'Merge the worlds. Bold move.', conf: 0, friend: 1 },
+      { icon: '💃', text: 'Sneak off to the dance floor — just the two of you', hint: 'Romantic but the boys notice.', conf: 0, friend: -1 },
+      { icon: '🤹', text: 'Try to do both — ping pong between the two all night', hint: '"He was everywhere and nowhere."', conf: 0, friend: 0 },
+    ]
+  },
+
+  // SCENE 6 — The big dance
+  {
+    label: 'Act II  ·  The Last Song',
+    emoji: '🎵',
+    title: 'Slow Song',
+    text: `The DJ switches it up. A slow song comes on. The lights go dim. This is that moment that only happens in movies — except it's happening right now, at Lake Ridge High, and it's real.<br/><br/>Mariah looks at you. You look at her.<br/><br/>What do you do?`,
+    choices: [
+      { icon: '🥳', text: 'Dance with her AND wave your whole crew over', hint: 'Make it a group moment. Legend behavior.', conf: 0, friend: 1 },
+      { icon: '🌹', text: 'Full romantic slow dance — just you two, rest of the world disappears', hint: 'Cinematic. Your boys are... watching.', conf: 0, friend: -1 },
+      { icon: '🕺', text: 'Attempt a choreographed routine you definitely didn\'t practice', hint: '"I have a plan," you whisper to yourself. You do not have a plan.', conf: 1, friend: 0 },
+    ]
+  },
+];
+
+// ── ENDINGS ──────────────────────────────────────────────────────────────────
+const endings = {
+  // Didn't ask + low/no friends
+  lonely: {
+    cls: 'end-1',
+    emoji: '😭',
+    tag: 'Ending 1 of 4',
+    title: 'Tears on the Pillow',
+    text: `You didn't ask Mariah. You watched her dance with someone else from across the gym all night, solo cup in hand, standing next to the snack table for two hours.<br/><br/>Your friends tried to find you but you'd already left early. You got home, put on a sad playlist, and stared at the ceiling.<br/><br/><strong>Mariah never knew you liked her. She still doesn't.</strong>`,
+    flavor: '"Maybe at graduation..." 💤'
+  },
+  // Didn't ask + high friends
+  friendzone: {
+    cls: 'end-2',
+    emoji: '🥳',
+    tag: 'Ending 2 of 4',
+    title: 'The Boys Had Your Back',
+    text: `Okay, you didn't ask Mariah. And yeah, watching her slow dance with someone else stung a little. Fine, a lot.<br/><br/>But your crew? Your crew did NOT let you sulk. They dragged you onto the dance floor, embarrassed themselves with you, and by the end of the night you were laughing so hard you forgot to be sad.<br/><br/><strong>Prom was actually kind of perfect.</strong> Different than you imagined, but perfect.`,
+    flavor: '"Real ones stay." 🤝'
+  },
+  // Asked + low friends
+  gotgirllostboys: {
+    cls: 'end-3',
+    emoji: '😬',
+    tag: 'Ending 3 of 4',
+    title: 'You Got the Girl (The Boys Are Mad)',
+    text: `You asked Mariah and she said <strong>yes</strong>. You danced with her all night and honestly? It was everything you dreamed of.<br/><br/>But somewhere between ignoring your friends' texts and disappearing for three hours, the vibe shifted. The group chat was <em>not</em> popping off in a good way.<br/><br/><strong>Mariah liked you. Your boys felt forgotten.</strong> That's a conversation you'll have to have on Monday.`,
+    flavor: '"The heart wants what it wants... consequences pending." 💛'
+  },
+  // Asked + high friends
+  perfect: {
+    cls: 'end-4',
+    emoji: '🌟',
+    tag: 'Ending 4 of 4',
+    title: 'The Night You\'ll Never Forget',
+    text: `You asked Mariah. She said yes. You danced with her. Your friends cheered. Someone started a chant. It was embarrassing in the best possible way.<br/><br/>By the end of the night Mariah was part of the group, your boys loved her, and the five of you piled into a booth at Whataburger at midnight like it was the most natural thing in the world.<br/><br/><strong>This is the one you'll tell stories about.</strong>`,
+    flavor: '"That\'s how it\'s done." ✨'
+  }
+};
+
+// ── GAME LOGIC ───────────────────────────────────────────────────────────────
+function startGame() {
+  confidence = 0;
+  friendScore = 0;
+  askedMariah = false;
+  currentScene = 0;
+  showScreen('game');
+  renderScene();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderScene() {
+  const scene = scenes[currentScene];
+  const totalScenes = scenes.length;
+
+  // Progress dots
+  const prog = document.getElementById('progress');
+  prog.innerHTML = '';
+  for (let i = 0; i < totalScenes; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'prog-dot' + (i < currentScene ? ' done' : i === currentScene ? ' active' : '');
+    prog.appendChild(dot);
+  }
+
+  // Scores
+  document.getElementById('conf-val').textContent = confidence;
+  document.getElementById('friend-val').textContent = friendScore;
+
+  // Scene content
+  document.getElementById('scene-label').textContent = scene.label;
+  document.getElementById('scene-emoji').textContent = scene.emoji;
+  document.getElementById('scene-title').textContent = scene.title;
+  document.getElementById('scene-text').innerHTML = scene.text;
+
+  // Choices
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  scene.choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `
+      <div class="choice-text">
+        ${choice.text}
+        ${choice.hint ? `<span class="choice-hint">${choice.hint}</span>` : ''}
+      </div>
+    `;
+    btn.onclick = () => handleChoice(choice);
+    choicesEl.appendChild(btn);
+  });
+}
+
+function handleChoice(choice) {
+  // Apply score changes
+  if (choice.conf)   confidence  += choice.conf;
+  if (choice.friend) friendScore += choice.friend;
+
+  // Track if Mariah was asked (scene 3)
+  if (typeof choice.ask !== 'undefined') {
+    askedMariah = choice.ask;
+  }
+
+  currentScene++;
+
+  // Skip prom scenes if didn't ask (scenes 4-6 still run, just narrative changes)
+  if (currentScene >= scenes.length) {
+    showEnding();
+  } else {
+    renderScene();
+  }
+}
+
+function showEnding() {
+  // Determine which ending
+  let endingKey;
+  if (!askedMariah) {
+    endingKey = friendScore >= 2 ? 'friendzone' : 'lonely';
+  } else {
+    endingKey = friendScore >= 2 ? 'perfect' : 'gotgirllostboys';
+  }
+
+  const end = endings[endingKey];
+
+  // Apply ending class for colors
+  const endEl = document.getElementById('ending');
+  endEl.className = 'screen ' + end.cls;
+
+  document.getElementById('end-emoji').textContent  = end.emoji;
+  document.getElementById('end-tag').textContent    = end.tag;
+  document.getElementById('end-title').textContent  = end.title;
+  document.getElementById('end-text').innerHTML     = end.text;
+  document.getElementById('end-flavor').textContent = end.flavor;
+
+  showScreen('ending');
+}
+
+function resetGame() {
+  startGame();
+}
+
+function showTitle() {
+  showScreen('title');
+}
+</script>
+</body>
+</html>
